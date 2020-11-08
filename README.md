@@ -1,4 +1,4 @@
-# Simple storage.
+# Simple storage
 
 Simple key-value storage written in Erlang. It does not overwrite value if key already exists. It uses AES-256 so be sure to generate your own encryption key.
 
