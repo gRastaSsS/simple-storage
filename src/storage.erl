@@ -8,14 +8,19 @@ run([FileName, IKey, Key]) ->
   crypto:start(),
   IVec = <<0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0>>,
   Text = read(FileName, list_to_binary(IKey), IVec),
-  io:format([find(Key, fun line_to_key_value/1, Text)]);
+  case find(Key, fun line_to_key_value/1, Text) of
+    not_found -> io:format("Value not found!");
+    Value -> io:format(Value)
+  end;
 
 run([FileName, IKey, Key, Value]) ->
   crypto:start(),
   IVec = <<0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0>>,
   Text = read(FileName, list_to_binary(IKey), IVec),
-  ModifiedText = put(Key, Value, Text, fun line_to_key_value/1, fun key_value_to_line/2),
-  write(FileName, ModifiedText, list_to_binary(IKey), IVec).
+  case put(Key, Value, Text, fun line_to_key_value/1, fun key_value_to_line/2) of
+    not_saved -> io:format("Not saved!");
+    ModifiedText -> write(FileName, ModifiedText, list_to_binary(IKey), IVec)
+  end.
 
 line_to_key_value(Line) -> string:split(Line, ":", leading).
 
@@ -48,7 +53,7 @@ find(Key, LineToKeyValue, Lines) ->
 put(Key, Value, Text, LineToKeyValue, KeyValueToLine) ->
   case find(Key, LineToKeyValue, Text) of
     not_found -> Text ++ KeyValueToLine(Key, Value) ++ "\n";
-    _Found -> Text
+    _Found -> not_saved
   end.
 
 
