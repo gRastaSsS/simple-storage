@@ -1,5 +1,5 @@
 -module(storage).
--author("Vladislav").
+-author("voismager").
 
 %% API
 -export([run/1]).
